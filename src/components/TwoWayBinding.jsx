@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDebounce } from "use-debounce";
 
 const TwoWayBinding = () => {
   const [data, setData] = useState({
@@ -9,9 +10,11 @@ const TwoWayBinding = () => {
     changedField: "firstField",
   });
 
+  const [debouncedData] = useDebounce(data, 500);
+
   const updateData = async () => {
     console.log("Called updateData");
-    let { firstField, secondField, thirdField, changedField } = data;
+    let { firstField, secondField, thirdField, changedField } = debouncedData;
     if (changedField === "firstField") {
       secondField = parseFloat(firstField) * 2;
     } else if (changedField === "secondField") {
@@ -30,11 +33,11 @@ const TwoWayBinding = () => {
 
   useEffect(() => {
     // console.log("Changed:", changed, Date.now());
-    console.log("Data:", data, Date.now());
-    if (data.changedField) {
+    console.log("Data:", debouncedData, Date.now());
+    if (debouncedData.changedField) {
       updateData();
     }
-  }, [data]);
+  }, [debouncedData]);
 
   const handleFieldChange = (event) => {
     const { name, value } = event.target;
